@@ -1,0 +1,190 @@
+<html>
+    <head>
+        <title>EbooksTrends</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+      
+        <!-- Website Header -->
+        <nav class="navbar navbar-light bg-secondary">
+          <a class="navbar-brand" href="#" style="color: white; font-family: Verdana, Geneva, Tahoma, sans-serif;">
+            <img src="https://media.istockphoto.com/id/1411701868/photo/magic-book-with-glitter-open-book-with-lights-glowing-in-dark-background.webp?b=1&s=170667a&w=0&k=20&c=YRAsEE8YSqO_oMc0vtFDcIFrEO-t3yDoN_MkJ51PAlY=" width="80" height="50" class="d-inline-block align-center" alt="">
+            EBookTrends
+          </a>
+          <div style="text-align: right; font-size: 18px; margin-right: 50px;">
+              <a href="homepage.html" style="color: white; margin-right: 20px;">Home</a>
+              <a href="cart.html" style="color: white; margin-right: 20px;">Cart</a>
+              <a href="index.php" style="color: white;">Logout</a>
+          </div>
+        </nav>
+
+         <!-- Search a book -->
+         <nav class="navbar navbar-light bg-light mt-4 ml-4">
+            <form class="form-inline">
+              <input style="width: 500px;" class="form-control" id="search" type="search" placeholder="Search a book" onkeyup="getData()">
+              <select id="select" class="select" onchange="getCategory()">
+                <option value="All">All</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Horror">Horror</option>
+                <option value="Historical">Historical</option>
+                <option value="Humor">Humor</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Poetry">Poetry</option>
+                <option value="Kids Stories">Kids Stories</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Education">Education</option>
+                <option value="Short Stories">Short Stories</option>
+              </select>
+
+            </form>
+          </nav>
+
+        <!-- Book Categories -->
+        <h4 style="margin-left: 25px;" id="heading"></h4>
+        <div class="card-container">
+        </div>
+        <h4 style="margin-left: 25px;">No books to display</h4>
+
+<!-- Footer -->
+    <footer style="background: black; color: white" class="text-center text-lg-start" id="footer">
+
+      <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+
+        <div class="me-5 d-none d-lg-block">
+          <span>Get connected with us on social networks:</span>
+        </div>
+
+        <div>
+          <a href="https://www.facebook.com/chandu.aarush/" class="social-icon">
+            <ion-icon name="logo-facebook"></ion-icon>
+          </a>
+          <a href="https://twitter.com/Aarush2412" class="social-icon">
+            <ion-icon name="logo-twitter"></ion-icon>
+          </a>
+          <a href="https://myaccount.google.com/u/1/" class="social-icon">
+            <ion-icon name="logo-google"></ion-icon>
+          </a>
+          <a href="https://www.instagram.com/chandu_aarush/" class="social-icon">
+            <ion-icon name="logo-instagram"></ion-icon>
+          </a>
+          <a href="https://www.linkedin.com/in/pasupuleti-chandra-sekhar-435915237/" class="social-icon">
+            <ion-icon name="logo-linkedin"></ion-icon>
+          </a>
+          <a href="https://github.com/ChandraSekhar1224" class="social-icon">
+            <ion-icon name="logo-github"></ion-icon>
+          </a>
+        </div>
+
+      </section>
+      <section>
+        <div class="mb-2 mt-4">
+
+          <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+          <p><ion-icon name="home-outline"></ion-icon> Visakhapatnam, AP, India</p>
+          <p>
+            <ion-icon name="mail-open-outline"></ion-icon></i>
+            ebooktrends@gmail.com
+          </p>
+          <p><ion-icon name="call-outline"></ion-icon> + 91 9014640180</p>
+        </div>
+      </section>
+
+      <div class="text-center p-4" style="background-color: grey;">© 2023 Copyright:
+        <a class="text-reset fw-bold" href="https://ebooktrends.com/">ebooktrends.com</a>
+      </div>
+    </footer>
+
+    <script type="text/javascript" defer>
+      let container=document.querySelector(".card-container")
+      const getAllData=()=>{
+          fetch("alldata.php")
+          .then(res => res.json())
+          .then(data=>data.map(
+            d=> showData(d)
+          )) 
+        }
+      const clearData=()=>{
+        let ele=document.getElementsByClassName("card")
+        while(ele.length>0)
+          ele[0].remove()
+      }
+      const getData=()=>{
+        if(!(localStorage.getItem("category")=="All")){
+        document.getElementsByClassName("select")[0].style.visibility="hidden"
+        } 
+        document.getElementById("heading").innerHTML=localStorage.getItem("category")+" Books"
+        let searchText=document.getElementById("search").value
+        document.cookie="searchText="+searchText
+        if(searchText=="")
+        {
+          getAllData()
+        }
+        else{
+        clearData()
+        fetch("data.php")
+          .then(res => res.json())
+          .then(data=>data.map(
+            d=> showData(d)
+          ))
+        }
+      }
+      const showData=(data)=>{
+          const ele=document.createElement("div")
+          ele.classList.add('card')
+          ele.innerHTML = `
+            <div style="height: 350px;">
+              <div class="card-heading">
+                <img id="book_image" src="${data.url}"></img>
+              </div>
+              <div class="card-body">
+                <button id="addToCart" onclick="addToCart('${data.title}', '${data.author}', '${data.price}', '${data.readings}', '${data.url}')" style="height: 35px; width: 150px; margin-top: auto; margin-bottom: 10px;">Add to cart</button>
+                <h4 class="book_name" id="book_title">${data.title}</h4>
+                <h5 id="book_author" class="author">${data.author}</h5>
+                <h4 id="book_price" class="price"><i class="fa fa-rupee"></i>${data.price}</h4>
+                <h4 id="book_reads">Reads:${data.readings}</h4>
+              </div>
+            </div>`;
+          ele.addEventListener('click', function () {
+            window.location.href = data.link;
+          });
+        container.appendChild(ele)
+        }
+
+        const addToCart = (title, author, price, readings, url) => {
+          if (title && author && price && readings && url) {
+              alert("Book added to cart: ");
+              const storedCartData = localStorage.getItem('cart') || '[]';
+              let cartData = JSON.parse(storedCartData);
+              cartData.push({ title, author, price, readings, url });
+              localStorage.setItem('cart', JSON.stringify(cartData));
+              location.href = "booksData.html";
+          } else {
+              alert("Invalid book data. Please try again.");
+          }
+      };
+
+
+      
+
+      const getCategory=()=>{
+      clearData()
+      let selected_item=document.querySelector(".select").value
+      document.getElementById("heading").innerHTML=selected_item+" Books"
+      document.cookie="category="+selected_item
+      fetch("category_data.php")
+        .then(res => res.json())
+        .then(data=>data.map(
+          d=> showData(d)
+        ))
+      }
+      getData()
+    </script>
+    </body>
+</html>
+
+
+ 

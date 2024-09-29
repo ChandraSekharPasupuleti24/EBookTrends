@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        table {
+            width: 98%;
+            margin-top: 20px;
+            border-style: solid;
+        }
+
+        th, td {
+            border: 1px solid;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        img {
+            width: 100px;
+            height: 80px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Website Header -->
+    <nav class="navbar navbar-light bg-secondary">
+        <a class="navbar-brand" href="#" style="color: white; font-family: Verdana, Geneva, Tahoma, sans-serif;">
+          <img src="https://media.istockphoto.com/id/1411701868/photo/magic-book-with-glitter-open-book-with-lights-glowing-in-dark-background.webp?b=1&s=170667a&w=0&k=20&c=YRAsEE8YSqO_oMc0vtFDcIFrEO-t3yDoN_MkJ51PAlY=" width="80" height="50" class="d-inline-block align-center" alt="">
+          EBookTrends
+        </a>
+        <div style="text-align: right; font-size: 18px; margin-right: 50px;">
+
+            <a href="homepage.html" style="color: white; margin-right: 20px;">Home</a>
+
+            <a href="#footer" style="color: white; margin-right: 20px;">Contact Us</a>
+
+            <a href="index.php" style="color: white; margin-right: 20px;">Logout</a>
+        </div>
+      </nav>
+
+    <h1 style="margin-left: 10px;">Your Shopping Cart</h1>
+
+    <table id="cart" style="margin-left: 10px;">
+        <thead>
+            <tr>
+                <th>Book Cover</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Price</th>
+                <th>Readings</th>
+                <th>Count</th>
+                <th>Buy</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const cartContainer = document.getElementById('cart');
+        const storedCartData = localStorage.getItem('cart');
+
+        if (storedCartData) {
+            const cartData = JSON.parse(storedCartData);
+            const validCartData = cartData.filter(item =>
+                item && item.title && item.author && item.price && item.readings && item.url
+            );
+
+            const groupedCartData = groupCartData(validCartData);
+            const tbody = document.querySelector('#cart tbody');
+
+            groupedCartData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${item.url}" alt="${item.title}"></td>
+                    <td>${item.title}</td>
+                    <td>${item.author}</td>
+                    <td>${item.price}</td>
+                    <td>${item.readings}</td>
+                    <td id="count_${item.title}">${item.count}</td>
+                    <td><button onclick="buyBook('${item.title}')">Buy</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    });
+
+    function groupCartData(cartData) {
+        const groupedData = [];
+        const uniqueTitles = Array.from(new Set(cartData.map(item => item.title)));
+
+        uniqueTitles.forEach(title => {
+            const itemsWithTitle = cartData.filter(item => item.title === title);
+            const count = itemsWithTitle.length;
+
+            if (count > 0) {
+                const groupedItem = { ...itemsWithTitle[0], count };
+                groupedData.push(groupedItem);
+            }
+        });
+
+        return groupedData;
+    }
+
+    function buyBook(title) {
+        const countElement = document.getElementById(`count_${title}`);
+        let count = parseInt(countElement.innerText);
+
+        if (count > 0) {
+            alert("Book purchased successfully!");
+            count--;
+            countElement.innerText = count;
+            const storedCartData = localStorage.getItem('cart');
+            if (storedCartData) {
+                const cartData = JSON.parse(storedCartData);
+                const updatedCartData = cartData.map(item => {
+                    if (item.title === title) {
+                        return { ...item, count };
+                    }
+                    return item;
+                });
+                localStorage.setItem('cart', JSON.stringify(updatedCartData));
+            }
+        } else {
+            alert("No more copies available.");
+        }
+    }
+</script>
+
+
+</body>
+</html>
